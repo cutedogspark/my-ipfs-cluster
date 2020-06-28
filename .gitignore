@@ -1,0 +1,5 @@
+.idea
+/compose
+swarm.key
+.env
+.DS_Store

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+ALLOW_ORIGINS='
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+    "http://35.229.204.13:3000",
+    "https://webui.ipfs.io"'
+
+# stop executing if anything fails
+set -e
+
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin "[$ALLOW_ORIGINS]"
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["PUT", "POST"]'
+
+echo "IPFS API CORS headers configured for $ALLOW_ORIGINS"
+echo "Please restart your IPFS daemon"
+

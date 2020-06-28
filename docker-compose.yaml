@@ -1,0 +1,92 @@
+version: '3.4'
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+services:
+  ipfswebui:
+    container_name: ipfswebui
+    image: garychen/ipfs-webui:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - frontend
+      - backend
+
+  ipfs_0:
+    container_name: ipfs_0
+    image: garychen/ipfs:v0.6.0
+    environment:
+      # IPFS_PROFILE : server
+      IPFS_BOOTSTRAP_SERVER_1 : ${IPFS_BOOTSTRAP_SERVER_1}
+      IPFS_SWARM_KEY : |
+        /key/swarm/psk/1.0.0/
+        /base16/
+        1b142bcbc610919725f69d461c1d8e28c8bde77e2ad0097d7040aa81be777e80
+    ports:
+      - "${IPFS_0_SWARM_PORT}:4001"
+      - "${IPFS_0_API_PORT}:5001"
+      - "${IPFS_0_GATEWAY_PORT}:8080"
+    command: daemon --migrate=true
+    volumes:
+      - ./scripts/container_daemon:/usr/local/bin/start_ipfs
+      - ./scripts:/scripts:ro
+      - ./compose/ipfs_0/data:/data/ipfs
+      - ./compose/ipfs_0/export:/data/export
+    networks:
+      - backend
+
+  ipfs_1:
+    container_name: ipfs_1
+    image: garychen/ipfs:v0.6.0
+    environment:
+      IPFS_BOOTSTRAP_SERVER_1 : ${IPFS_BOOTSTRAP_SERVER_1}
+      IPFS_SWARM_KEY : |
+        /key/swarm/psk/1.0.0/
+        /base16/
+        1b142bcbc610919725f69d461c1d8e28c8bde77e2ad0097d7040aa81be777e80
+    ports:
+      - "${IPFS_1_SWARM_PORT}:4001"
+      - "${IPFS_1_API_PORT}:5001"
+      - "${IPFS_1_GATEWAY_PORT}:8080"
+    command: daemon --migrate=true
+    volumes:
+      - ./compose/ipfs_1/data:/data/ipfs
+      - ./compose/ipfs_1/export:/data/export
+    networks:
+      - backend
+  
+  ipfs_2:
+    container_name: ipfs_2
+    image: garychen/ipfs:v0.6.0
+    environment:
+      IPFS_BOOTSTRAP_SERVER_1 : ${IPFS_BOOTSTRAP_SERVER_1}
+      IPFS_SWARM_KEY : |
+        /key/swarm/psk/1.0.0/
+        /base16/
+        1b142bcbc610919725f69d461c1d8e28c8bde77e2ad0097d7040aa81be777e80
+    ports:
+      - "${IPFS_2_SWARM_PORT}:4001"
+      - "${IPFS_2_API_PORT}:5001"
+      - "${IPFS_2_GATEWAY_PORT}:8080"
+    command: daemon --migrate=true
+    volumes:
+      - ./compose/ipfs_2/data:/data/ipfs
+      - ./compose/ipfs_2/export:/data/export
+    networks:
+      - backend
+  
+  ipfs-client:
+    image: garychen/ipfs:v0.6.0
+    environment:
+      IPFS_BOOTSTRAP_SERVER_1 : ${IPFS_BOOTSTRAP_SERVER_1}
+      IPFS_SWARM_KEY : |
+        /key/swarm/psk/1.0.0/
+        /base16/
+        1b142bcbc610919725f69d461c1d8e28c8bde77e2ad0097d7040aa81be777e80
+    networks:
+      - backend
+    
